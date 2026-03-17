@@ -1,0 +1,20 @@
+name: DAPPSNAP Recording
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  trigger-recording:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger DAPPSNAP recording
+        run: |
+          curl -X POST "${{ secrets.DAPPSNAP_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "pr_number": ${{ github.event.pull_request.number }},
+              "pr_title": "${{ github.event.pull_request.title }}",
+              "repo": "${{ github.repository }}",
+              "sha": "${{ github.event.pull_request.head.sha }}"
+            }'

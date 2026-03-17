@@ -1,0 +1,37 @@
+{
+  "name": "dappsnap",
+  "version": "1.0.0",
+  "description": "Headless MetaMask automation + video recording pipeline for Web3 dapps",
+  "type": "module",
+  "main": "dist/record.js",
+  "bin": {
+    "dappsnap": "dist/record.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "playwright test test/basic.test.ts",
+    "synpress:setup": "synpress",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@synthetixio/synpress": "^4.0.0-alpha.5",
+    "@synthetixio/synpress-metamask": "^0.0.14",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "headless-web3-provider": "^0.3.2",
+    "js-yaml": "^4.1.1",
+    "playwright": "^1.44.0",
+    "puppeteer-core": "^24.39.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/express": "^5.0.6",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,48 @@
+# DAPPSNAP demo config — any dapp, no wallet required
+# Works on any machine. No MetaMask, no extension loading.
+# Use this to verify the pipeline before running wallet flows.
+
+baseUrl: https://app.uniswap.org
+viewport:
+  width: 1920
+  height: 1080
+walletAction: none
+
+flows:
+  - name: uniswap-swap-page
+    path: /swap
+    description: Navigate to Uniswap swap interface and demonstrate the token selection UI
+    waitForSelector: body
+    duration: 10
+    actions:
+      - type: wait
+        duration: 3
+      - type: screenshot
+        name: initial-load
+      - type: scroll
+        direction: down
+        amount: 300
+        delay: 2
+      - type: scroll
+        direction: up
+        amount: 300
+        delay: 1
+
+  - name: uniswap-explore
+    path: /explore
+    description: Browse the Uniswap explore/analytics page showing top tokens and pools
+    waitForSelector: body
+    duration: 12
+    actions:
+      - type: wait
+        duration: 3
+      - type: scroll
+        direction: down
+        amount: 500
+        delay: 2
+      - type: screenshot
+        name: token-list
+      - type: scroll
+        direction: down
+        amount: 500
+        delay: 2

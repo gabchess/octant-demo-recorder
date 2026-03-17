@@ -1,0 +1,47 @@
+{
+  "baseUrl": "https://octant.app",
+  "viewport": { "width": 1920, "height": 1080 },
+  "walletAction": "inject",
+  "flows": [
+    {
+      "name": "octant-home",
+      "path": "/",
+      "description": "Octant homepage with wallet connected, showing personal allocation, donations, and epoch results",
+      "waitForSelector": "[data-testid='HomeView__title'], [data-testid='HomeGrid'], main",
+      "duration": 12,
+      "actions": [
+        { "type": "wait", "duration": 3 },
+        { "type": "scroll", "direction": "down", "amount": 400, "delay": 2 },
+        { "type": "scroll", "direction": "down", "amount": 400, "delay": 2 },
+        { "type": "scroll", "direction": "up", "amount": 800, "delay": 1 }
+      ]
+    },
+    {
+      "name": "octant-projects",
+      "path": "/projects",
+      "description": "Projects list showing all fundable projects with search and sort controls",
+      "waitForSelector": "[data-testid='ProjectsView__ProjectsListItem'], [data-testid='ProjectsList__InputText'], main",
+      "duration": 15,
+      "actions": [
+        { "type": "wait", "duration": 3 },
+        { "type": "scroll", "direction": "down", "amount": 500, "delay": 2 },
+        { "type": "scroll", "direction": "down", "amount": 500, "delay": 2 },
+        { "type": "scroll", "direction": "down", "amount": 500, "delay": 2 },
+        { "type": "scroll", "direction": "up", "amount": 1500, "delay": 1 }
+      ]
+    },
+    {
+      "name": "octant-metrics",
+      "path": "/metrics",
+      "description": "Protocol metrics dashboard showing epoch stats, general stats, and navigation between epochs",
+      "waitForSelector": "[data-testid='MetricsView__title'], [data-testid='MetricsEpoch'], main",
+      "duration": 12,
+      "actions": [
+        { "type": "wait", "duration": 3 },
+        { "type": "scroll", "direction": "down", "amount": 400, "delay": 2 },
+        { "type": "scroll", "direction": "down", "amount": 400, "delay": 2 },
+        { "type": "scroll", "direction": "up", "amount": 800, "delay": 1 }
+      ]
+    }
+  ]
+}

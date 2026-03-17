@@ -1,0 +1,5 @@
+{
+  "name": "dappsnap",
+  "description": "Record screencasts of any web3 dApp via remote Chrome CDP. Config-driven, wallet-aware, zero-display.",
+  "version": "1.0.0"
+}
