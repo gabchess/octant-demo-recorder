@@ -1,5 +1,5 @@
 ---
-description: Fast recording with defaults from .env. No questions asked.
+description: Records with saved plan if one exists. Runs the design interview first if no plan is saved yet.
 argument-hint: [--url URL] [--duration SECONDS]
 allowed-tools:
   - Bash
@@ -11,13 +11,20 @@ user-invocable: true
 
 # DappSnap Record
 
-Fast path recording. Runs immediately with defaults from .env. No conversation, no confirmation.
+Smart recording path. Fast for repeat users (uses saved plan). Guided for first-timers (no plan → runs design interview first).
 
 ## Execution
 
-1. Read `.env` for defaults (CDP_HOST, CDP_PORT, DAPPSNAP_URL)
-2. Check if a RECORDING-PLAN.md exists in `.arcana/artifacts/` -- if yes, use it
-3. If no plan exists, run a single recording with defaults
+1. Check if `.arcana/artifacts/RECORDING-PLAN.md` exists.
+
+**If no plan exists (first time):**
+Tell the user:
+> "No recording plan found. Let's design one first — I'll ask you a few questions about what to record."
+Then invoke `/dappsnap:design` and stop. Do not record anything yet.
+
+**If a plan exists:**
+2. Read `.env` for defaults (CDP_HOST, CDP_PORT, DAPPSNAP_URL)
+3. Read `.arcana/artifacts/RECORDING-PLAN.md` and execute each flow
 4. Report file path and size when done
 
 ### With arguments
