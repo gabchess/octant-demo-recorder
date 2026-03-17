@@ -68,3 +68,23 @@ recordings/        Output directory (WebM files)
 - Shell alias tag: `# dappsnap-plugin` (for clean removal/update by setup)
 - Never close Chrome (use `browser.disconnect()` not `browser.close()`)
 - Test wallet only. Zero real funds. Separate Chrome profile.
+
+## Sharing and Forking
+
+DappSnap is a Claude Code plugin. Anyone can install it with one line:
+
+1. Share the repo URL
+2. They clone it and run the root `SKILL.md` as an installer:
+   - Fetch the raw SKILL.md URL, paste it into a Claude session, and follow the steps
+   - Or: clone the repo, then run `/dappsnap:setup`
+
+To share a customized version (different target URLs, recording plans, wallet configs):
+
+1. Fork the repo
+2. Edit skills, `.env` defaults, or recording plans to match your setup
+3. Push your fork
+4. Share the fork URL -- anyone who clones it gets your configuration
+
+Shell config lines are tagged `# dappsnap-plugin` for clean removal. Running setup again replaces existing tagged lines without duplicating.
+
+The alias points at the local clone, so editing skill `.md` files takes effect immediately. Run `/reload-plugins` inside a live session to pick up skill changes without restarting.

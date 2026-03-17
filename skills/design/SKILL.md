@@ -6,7 +6,7 @@ allowed-tools:
   - Read
   - Write
   - AskUserQuestion
-model: inherit
+model: opus
 context: inherit
 user-invocable: true
 ---
@@ -145,9 +145,23 @@ AskUserQuestion:
   header: "Plan Summary"
   options:
     - label: "Record now"
-      description: "[show full plan summary inline]"
+      description: "Start recording with this plan"
+      preview: |
+        RECORDING PLAN
+        Target: $TARGET_URL
+        Pages: [list each page with path]
+        Actions: [list selected actions]
+        Duration per page: $DURATION_SECONDS seconds
+        Output format: $OUTPUT_FORMAT
+        Estimated total: [page count * duration] seconds
+
+        Flows:
+        [for each page:]
+          Page N: [page name] ([URL path])
+          Actions: [actions for this page]
+          Duration: $DURATION_SECONDS seconds
     - label: "Change something"
-      description: "Go back and edit"
+      description: "Go back and edit a specific step"
     - label: "Save plan only"
       description: "Write plan to disk, run later with /dappsnap:record"
 ```
@@ -208,7 +222,7 @@ ffmpeg -y -i "$WEBM_PATH" \
 Final report:
 
 ```
-✅ Recording complete.
+Recording complete.
 
 Files:
   [list each output file with size]
@@ -216,3 +230,12 @@ Files:
 Plan saved: .arcana/artifacts/RECORDING-PLAN.md
 To re-run: /dappsnap:record
 ```
+
+## Anti-Patterns
+
+- **Never record without confirming the plan** — always present the full plan summary in a preview block and wait for explicit approval before starting any recording
+- **Never skip the interview** — even if the user provides a URL as an argument, still ask about pages, actions, and duration; the URL only skips Step 1
+- **Never batch questions** — ask one question at a time; each step gets its own AskUserQuestion call
+- **Never assume the user knows what CDP or WebM means** — use plain language; say "Chrome recording connection" not "CDP", say "video file" not "WebM" unless the user is technical
+- **Never start recording without verifying Chrome is reachable** — run the CDP health check before attempting to record; if Chrome is not running, tell the user how to start it
+- **Never overwrite an existing recording plan without asking** — if `.arcana/artifacts/RECORDING-PLAN.md` already exists, ask whether to replace or create a new one

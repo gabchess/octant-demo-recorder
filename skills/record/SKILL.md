@@ -4,7 +4,7 @@ argument-hint: [--url URL] [--duration SECONDS]
 allowed-tools:
   - Bash
   - Read
-model: inherit
+model: sonnet
 context: inherit
 user-invocable: true
 ---
@@ -58,3 +58,11 @@ Recording saved: recordings/dappsnap-[timestamp].webm ([size])
 To design a custom recording: /dappsnap:design
 To check infrastructure: /dappsnap:status
 ```
+
+## Anti-Patterns
+
+- **Never close Chrome** — always use `browser.disconnect()`, never `browser.close()`; the Chrome instance is shared and must stay running for future recordings
+- **Never assume CDP is reachable** — check the CDP endpoint before attempting to connect; if unreachable, report the error and tell the user how to start Chrome with the recording profile
+- **Never overwrite existing recordings without checking** — recordings use timestamped filenames by design; if a filename collision somehow occurs, append a suffix rather than overwriting
+- **Never run without verifying the build is current** — check that `dist/src/screencast.js` exists before executing; if missing, report "Build required: run `npm run build` first" and stop
+- **Never swallow recording errors** — if the screencast process exits with a non-zero code, report the full error output; do not silently continue to the next flow

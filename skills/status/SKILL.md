@@ -3,7 +3,7 @@ description: Health check. Chrome reachable? Webhook up? Last recording.
 allowed-tools:
   - Bash
   - Read
-model: inherit
+model: sonnet
 context: inherit
 user-invocable: true
 ---
@@ -81,3 +81,10 @@ Last Recording: [recordings/dappsnap-YYYY-MM-DD.webm (X.XMB) / none]
 
 Build:          [CURRENT (timestamp) / STALE — run npm run build]
 ```
+
+## Anti-Patterns
+
+- **Never attempt to fix problems automatically** — this skill reports status only; if something is broken, tell the user what is wrong and how to fix it, but do not run fix commands
+- **Never assume Tailscale is installed** — if `tailscale` command is not found, report "Tailscale: NOT INSTALLED" rather than erroring out; Tailscale is only needed for remote Chrome setups
+- **Never skip any health check** — run all five checks (CDP, webhook, Tailscale, last recording, build status) every time, even if an earlier check fails
+- **Never report misleading status** — if a check times out, report "TIMEOUT" not "UNREACHABLE"; if a service returns an unexpected response, report the raw response for debugging

@@ -5,7 +5,7 @@ allowed-tools:
   - Read
   - Write
   - AskUserQuestion
-model: inherit
+model: sonnet
 context: inherit
 user-invocable: true
 ---
@@ -384,3 +384,12 @@ Your recording profile and wallet state are saved in:
   ~/Library/Application Support/DappSnap-Profile
 Everything will be there next time — no need to reconnect or lock tokens again.
 ```
+
+## Anti-Patterns
+
+- **Never modify shell config without confirmation** — always explain what will be written and where, then wait for explicit approval before touching any rc file
+- **Never start Chrome without explaining** — the user needs to understand why a separate profile exists and that it stays open during recording
+- **Never assume MetaMask is installed** — always check and guide through installation if needed; never skip the wallet interview
+- **Never skip the wallet/access requirements interview** — even if the target URL is well-known, the user's profile state may differ; always ask
+- **Never write .env values without verifying** — if CDP_HOST or DAPPSNAP_URL already exist in .env, confirm before overwriting
+- **Never assume the repo is built** — check for `dist/src/screencast.js` and prompt `npm run build` if missing
