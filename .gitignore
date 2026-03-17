@@ -7,15 +7,19 @@ node_modules/
 # Build output
 dist/
 
-# Recordings
+# Recordings — local only
 recordings/
 
 # Playwright artifacts
 test-results/
 playwright-report/
-
-# Generated test files (created at runtime)
 recordings/_generated_tests/
+.cache-synpress/
+
+# Internal / development only
+.arcana/
+infra/
+SUBMISSION.md
 
 # macOS
 .DS_Store
