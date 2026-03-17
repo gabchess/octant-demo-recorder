@@ -11,7 +11,9 @@ user-invocable: true
 
 # DappSnap Record
 
-Smart recording path. Fast for repeat users (uses saved plan). Guided for first-timers (no plan → runs design interview first).
+Smart recording path. Fast for repeat users (uses saved plan). Guided for first-timers (no plan, routes to design interview first).
+
+All paths below use `$PLUGIN_DIR` which is the repo root (the directory containing `.claude-plugin/plugin.json`). Resolve it from the working directory or the skill's parent: the user is expected to `cd` into the repo before launching the alias.
 
 ## Execution
 
@@ -32,7 +34,7 @@ Then invoke `/dappsnap:design` and stop. Do not record anything yet.
 If the user passed `--url` or `--duration`, use those:
 
 ```bash
-cd ~/projects/octant-demo-recorder
+cd "$PLUGIN_DIR"
 node dist/src/screencast.js $ARGUMENTS
 ```
 
@@ -41,7 +43,7 @@ node dist/src/screencast.js $ARGUMENTS
 If `.arcana/artifacts/RECORDING-PLAN.md` exists, parse each flow and run sequentially:
 
 ```bash
-cd ~/projects/octant-demo-recorder
+cd "$PLUGIN_DIR"
 # For each flow in the plan:
 node dist/src/screencast.js --url "[flow URL]" --duration [duration]
 ```
@@ -49,7 +51,7 @@ node dist/src/screencast.js --url "[flow URL]" --duration [duration]
 ### With defaults only
 
 ```bash
-cd ~/projects/octant-demo-recorder
+cd "$PLUGIN_DIR"
 node dist/src/screencast.js
 ```
 

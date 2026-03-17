@@ -42,7 +42,7 @@ export interface ScreencastResult {
 export async function recordScreencast(
   options: ScreencastOptions = {},
 ): Promise<ScreencastResult> {
-  const cdpHost = process.env.CDP_HOST ?? "100.68.19.10";
+  const cdpHost = process.env.CDP_HOST ?? "localhost";
   const cdpPort = process.env.CDP_PORT ?? "9222";
   const url =
     options.url ?? process.env.DAPPSNAP_URL ?? "https://glm.octant.app/";

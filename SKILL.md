@@ -16,7 +16,7 @@ Read this file, then follow the steps below to set up the dappsnap plugin for th
 3. **Before doing anything else**, explain to the user what setup will do and ask for confirmation. Include:
    - How plugins work: `--plugin-dir` tells Claude Code to load `.claude-plugin/plugin.json` from a directory and register all `skills/*/SKILL.md` files as slash commands
    - What dappsnap does: records screencasts of web3 dApps by connecting to Chrome via CDP, driving the browser autonomously, and saving video
-   - If repo not found: that we'll clone it from `https://github.com/gava/octant-demo-recorder.git`
+   - If repo not found: that we'll clone it from `https://github.com/gabchess/octant-demo-recorder.git`
    - That we'll create a shell alias (e.g. `alias dappsnap='claude --plugin-dir /path/to/repo'`)
    - Why the alias is useful: keeps things isolated -- dappsnap only loads when you use the alias, plain `claude` stays clean
    - That the alias points at the local clone, so editing skill markdown files takes effect immediately
@@ -25,7 +25,7 @@ Read this file, then follow the steps below to set up the dappsnap plugin for th
 
 4. If repo was not found, ask where to clone it (default: `~/projects/octant-demo-recorder`) and run:
    ```bash
-   git clone https://github.com/gava/octant-demo-recorder.git "$CLONE_DIR"
+   git clone https://github.com/gabchess/octant-demo-recorder.git "$CLONE_DIR"
    ```
    Set `$PLUGIN_DIR` to the clone location.
 

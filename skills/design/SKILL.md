@@ -196,7 +196,7 @@ For each page in `$PAGES`:
 
 2. Run the recording:
 ```bash
-cd ~/projects/octant-demo-recorder
+cd "$PLUGIN_DIR"
 node dist/src/screencast.js --url "$FLOW_URL" --duration $DURATION_SECONDS
 ```
 

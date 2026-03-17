@@ -19,8 +19,8 @@ Run all checks and report:
 ### 1. Chrome CDP
 
 ```bash
-source ~/projects/octant-demo-recorder/.env 2>/dev/null
-CDP_HOST="${CDP_HOST:-100.68.19.10}"
+source .env 2>/dev/null
+CDP_HOST="${CDP_HOST:-localhost}"
 CDP_PORT="${CDP_PORT:-9222}"
 curl -s --connect-timeout 3 "http://${CDP_HOST}:${CDP_PORT}/json/version" 2>/dev/null
 echo "EXIT=$?"
@@ -49,7 +49,7 @@ Report: connected or not connected.
 ### 4. Last Recording
 
 ```bash
-ls -lt ~/projects/octant-demo-recorder/recordings/*.webm 2>/dev/null | head -3
+ls -lt recordings/*.webm 2>/dev/null | head -3
 ```
 
 Report: last recording file, size, timestamp. Or "no recordings yet".
@@ -57,7 +57,7 @@ Report: last recording file, size, timestamp. Or "no recordings yet".
 ### 5. Build Status
 
 ```bash
-ls -la ~/projects/octant-demo-recorder/dist/src/screencast.js 2>/dev/null
+ls -la dist/src/screencast.js 2>/dev/null
 echo "EXIT=$?"
 ```
 
