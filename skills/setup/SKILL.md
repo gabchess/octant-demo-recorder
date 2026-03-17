@@ -12,138 +12,170 @@ user-invocable: true
 
 # DappSnap Setup
 
-First-time setup. Explains how everything works in plain language, checks what's already running, walks the user through anything missing step by step, then installs the alias and config.
+First-time setup. Explains how everything works in plain language, figures out what the user needs (wallet or no wallet, access requirements), and walks them through every step before recording anything.
 
-**No jargon. No assumptions. Explain everything before asking anything.**
+**No jargon. No assumptions. Ask before assuming.**
 
 <progress>
-- [ ] Step 1: Welcome + explain how dappsnap works
-- [ ] Step 2: Find the repo
-- [ ] Step 3: Check Chrome — explain, detect, guide if missing
-- [ ] Step 4: Check Tailscale — explain, detect, guide if missing
-- [ ] Step 5: Summarize status, ask for confirmation
-- [ ] Step 6: Ask for alias name
-- [ ] Step 7: Write alias to shell config
-- [ ] Step 8: Write .env if needed
+- [ ] Step 1: Welcome — explain how dappsnap works
+- [ ] Step 2: Target URL
+- [ ] Step 3: Wallet / access requirements
+- [ ] Step 4: Chrome setup — explain, check, guide
+- [ ] Step 5: MetaMask setup (if needed)
+- [ ] Step 6: App access requirements (if needed)
+- [ ] Step 7: Confirm readiness
+- [ ] Step 8: Alias + .env
 - [ ] Step 9: Final instructions
 </progress>
 
 ---
 
-## Step 1: Welcome + Explain
-
-Before doing anything else, explain how dappsnap works. Use plain language:
+## Step 1: Welcome
 
 ```
 AskUserQuestion:
   question: "Welcome to DappSnap. Here's how it works before we set anything up."
   header: "How DappSnap Works"
   options:
-    - label: "Got it — let's set it up"
+    - label: "Got it — let's start"
     - label: "Exit"
   preview: |
     WHAT DAPPSNAP DOES
-    DappSnap records a video walkthrough of any web3 app — navigating pages,
-    scrolling, interacting — and saves it as an MP4 file.
+    DappSnap records a video walkthrough of any web app — navigating pages,
+    scrolling, interacting — and saves it as an MP4 file you can share.
 
-    HOW IT WORKS (3 pieces)
+    HOW IT WORKS
+    1. Chrome browser — runs on your machine with a dedicated recording profile.
+       This is the browser that gets recorded. It stays open during recording.
 
-    1. Chrome browser — runs on your Mac with a dedicated profile and MetaMask
-       installed. This is the browser that gets recorded. It needs to be open
-       before any recording starts.
+    2. DappSnap skill — the agent connects to Chrome, drives it automatically
+       (navigates, scrolls, interacts), and saves the video.
 
-    2. Tailscale — a networking tool that creates a private tunnel so the
-       recording script can reach your Chrome browser securely. Both machines
-       need Tailscale installed.
-
-    3. DappSnap skill — the agent drives Chrome remotely, navigates the app,
-       and saves the recording as a file on your machine.
+    That's it. No screen recorder. No manual clicking.
 
     WHAT WE'LL DO IN SETUP
-    - Check if Chrome is running and ready
-    - Check if Tailscale is connected
-    - Guide you through anything that's missing
-    - Create a shortcut (alias) so you can launch dappsnap easily
-
-    This takes about 5 minutes.
+    - Find out what app you want to record
+    - Figure out if it needs a wallet to access
+    - Walk you through anything that needs to be set up first
+    - Install a shortcut to launch dappsnap easily
 ```
 
 If "Exit" → stop.
 
 ---
 
-## Step 2: Find the Repo
-
-Check if we're inside the dappsnap repo:
-
-```bash
-if [ -f ".claude-plugin/plugin.json" ]; then
-  echo "REPO_FOUND=true"
-  echo "PLUGIN_DIR=$(pwd)"
-else
-  for dir in \
-    "$HOME/projects/octant-demo-recorder" \
-    "$HOME/git/octant-demo-recorder" \
-    "$HOME/projects/dappsnap" \
-    "$HOME/git/dappsnap"; do
-    if [ -f "$dir/.claude-plugin/plugin.json" ]; then
-      echo "REPO_FOUND=true"
-      echo "PLUGIN_DIR=$(cd $dir && pwd)"
-      break
-    fi
-  done
-fi
-```
-
-If repo not found, ask:
+## Step 2: Target URL
 
 ```
 AskUserQuestion:
-  question: "Where is the dappsnap folder on your machine?"
-  header: "Repo Location"
+  question: "What app do you want to record?"
+  header: "Target App"
   options:
-    - label: "Enter path manually"
+    - label: "Octant v2"
+      description: "https://glm.octant.app/"
+    - label: "Uniswap"
+      description: "https://app.uniswap.org/"
+    - label: "Aave"
+      description: "https://app.aave.com/"
+    - label: "Something else"
+      description: "Enter a custom URL"
 ```
 
-Store as `$PLUGIN_DIR`.
+If "Something else" → ask for URL. Store as `$TARGET_URL`.
 
 ---
 
-## Step 3: Chrome — Explain, Check, Guide
+## Step 3: Wallet / Access Requirements
 
-First explain what Chrome needs to be:
+```
+AskUserQuestion:
+  question: "Does this app require a crypto wallet to access its full features?"
+  header: "Wallet Check"
+  options:
+    - label: "No — it's a public app, no wallet needed"
+      description: "Anyone can browse it. No login required."
+    - label: "Yes — wallet connect required"
+      description: "You need MetaMask (or similar) connected to see the main features."
+    - label: "Not sure"
+      description: "I'll explain what to look for."
+```
+
+If "Not sure":
+```
+Tell the user:
+  Most DeFi apps show a "Connect Wallet" button on the homepage.
+  If the main content (dashboard, pools, metrics) is hidden behind that button —
+  you need a wallet. If you can browse without connecting — you don't.
+
+  Common apps that DO require a wallet: Octant, Aave, Compound, Gnosis Safe.
+  Common apps that DON'T: Uniswap landing page, DeFiLlama, most docs sites.
+```
+Then re-ask.
+
+Store as `$NEEDS_WALLET` (true/false).
+
+---
+
+## Step 3b: App-Specific Access Requirements (if wallet needed)
+
+```
+AskUserQuestion:
+  question: "Does this app have any special requirements beyond just connecting a wallet?"
+  header: "Access Requirements"
+  options:
+    - label: "No — just connect MetaMask and you're in"
+      description: "Standard wallet connect, no tokens or staking required."
+    - label: "Yes — it requires holding or locking tokens"
+      description: "Like Octant v2 which requires 100 GLM locked to access all features."
+    - label: "Not sure"
+```
+
+If "Yes — tokens required":
+```
+AskUserQuestion:
+  question: "What does it require?"
+  header: "Token Requirement"
+  options:
+    - label: "Lock or stake tokens (like Octant's 100 GLM requirement)"
+    - label: "Hold a minimum token balance"
+    - label: "Other (I'll explain)"
+```
+
+Store requirements as `$ACCESS_REQUIREMENTS`. We'll guide the user through this in Step 6.
+
+---
+
+## Step 4: Chrome Setup
 
 Tell the user:
 
 ```
-CHROME CHECK
-DappSnap needs Chrome to run with a special flag that lets it be controlled remotely.
-This is called the "debug port" — it's the same Chrome you already have, just started
-with an extra option. We keep it in a separate profile so it doesn't mix with your
-regular browsing.
+CHROME SETUP
+DappSnap needs Chrome to run with a dedicated recording profile — separate from
+your regular Chrome. This way MetaMask and your recording wallet stay isolated
+from your personal browser.
 
-Checking now if Chrome is already running and ready...
+Checking if a recording-ready Chrome is already running...
 ```
 
-Run the check:
-
+Check:
 ```bash
-curl -s --connect-timeout 3 "http://100.68.19.10:9222/json/version" 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print('CDP_OK=true\nBROWSER=' + d.get('Browser','?'))" 2>/dev/null || echo "CDP_OK=false"
+curl -s --connect-timeout 3 "http://localhost:9222/json/version" 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print('CDP_OK=true')" 2>/dev/null || echo "CDP_OK=false"
 ```
 
-**If CDP_OK=true:** tell the user Chrome is already running and ready. Show which version. Continue.
+**If CDP_OK=true:** Chrome is already running. Continue.
 
-**If CDP_OK=false:** walk the user through starting it:
+**If CDP_OK=false:**
 
 ```
 AskUserQuestion:
-  question: "Chrome isn't running yet. Let's start it."
+  question: "Chrome isn't running yet in recording mode. Let's start it."
   header: "Start Chrome"
   options:
-    - label: "I'll start it now"
-    - label: "Skip for now"
+    - label: "I'll start it now — show me the command"
+    - label: "Skip for now (I'll start it before recording)"
   preview: |
-    Open a new terminal window and paste this command:
+    Open a new terminal window and paste this exact command:
 
     /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
       --remote-debugging-port=9222 \
@@ -151,137 +183,176 @@ AskUserQuestion:
       --user-data-dir="$HOME/Library/Application Support/DappSnap-Profile" \
       --no-first-run --no-default-browser-check
 
-    That opens a Chrome window with a separate profile — this is where MetaMask
-    will live for recordings. Leave that terminal running (don't close it).
+    This opens a Chrome window with a fresh profile just for DappSnap.
+    Leave that terminal window open — don't close it.
+    Chrome needs to stay running while you record.
 
-    If this is your first time: install MetaMask in that Chrome window,
-    create or import a test wallet, and make sure it's connected to the app
-    you want to record.
+    IMPORTANT: This profile starts completely empty (no extensions, no bookmarks).
+    That's intentional — it keeps your recording environment clean.
 ```
 
-If "I'll start it now": wait, then re-check CDP. If still not reachable, show the command again and offer to continue anyway.
+If "I'll start it now": wait for user to confirm, then re-check CDP. If still not reachable, show command again. Continue regardless.
 
 ---
 
-## Step 4: Tailscale — Explain, Check, Guide
+## Step 5: MetaMask Setup (only if $NEEDS_WALLET = true)
 
+```
+AskUserQuestion:
+  question: "Do you already have MetaMask installed in your DappSnap Chrome profile?"
+  header: "MetaMask"
+  options:
+    - label: "Yes — MetaMask is installed and I have a wallet ready"
+    - label: "No — I need to install MetaMask"
+    - label: "I have MetaMask but need to set up a new wallet for recording"
+```
+
+**If "No — I need to install MetaMask":**
+
+```
 Tell the user:
+  In the DappSnap Chrome window (the one you just opened):
 
-```
-TAILSCALE CHECK
-Tailscale creates a private network between your machines so the recording script
-can reach Chrome securely. We need to forward Chrome's debug port over this network.
+  1. Go to: https://metamask.io/download
+  2. Click "Install MetaMask for Chrome"
+  3. Follow the installation steps
+  4. When asked to create a wallet: create a NEW wallet — don't import your main wallet
+     Keep this wallet separate. It's for recording only.
+  5. Write down or save the seed phrase somewhere safe
+  6. Complete the MetaMask setup — you'll see the fox icon in your toolbar
 
-Checking if Tailscale is active...
-```
-
-```bash
-curl -s --connect-timeout 3 "http://100.68.19.10:9222/json/version" 2>/dev/null && echo "TUNNEL_OK=true" || echo "TUNNEL_OK=false"
-```
-
-**If TUNNEL_OK=true:** tell the user the tunnel is active. Continue.
-
-**If TUNNEL_OK=false:**
-
-```
-AskUserQuestion:
-  question: "Tailscale tunnel isn't active yet. Let's set it up."
-  header: "Tailscale Forward"
-  options:
-    - label: "I'll run it now"
-    - label: "Skip for now"
-  preview: |
-    Open a new terminal window and run:
-
-    /Applications/Tailscale.app/Contents/MacOS/Tailscale serve --bg --tcp 9222 tcp://localhost:9222
-
-    This forwards Chrome's debug port over Tailscale so recordings can work
-    from another machine. It runs in the background — you'll see a confirmation
-    message when it's active. You only need to run this once per session.
-
-    If Tailscale isn't installed: download it from https://tailscale.com/download
-    and connect to your network before continuing.
+  Come back here when MetaMask is installed and set up.
 ```
 
-Re-check after user confirms. Continue regardless.
+Re-ask to confirm MetaMask is installed before continuing.
+
+**If "I have MetaMask but need to set up a new wallet":**
+
+```
+Tell the user:
+  In MetaMask, click the circle icon (top right) → "Add account or hardware wallet"
+  → "Add a new account". Give it a name like "DappSnap Recording".
+
+  This creates a fresh wallet address for recording. Keep it separate from
+  your main wallet — you may need to fund it with a small amount of ETH for gas.
+```
 
 ---
 
-## Step 5: Status Summary + Confirmation
+## Step 6: App Access Requirements (only if $ACCESS_REQUIREMENTS is set)
+
+Handle based on what was captured in Step 3b.
+
+**If app requires locking/staking tokens (like Octant's 100 GLM):**
 
 ```
 AskUserQuestion:
-  question: "Here's your current status. Ready to finish setup?"
-  header: "Setup Summary"
+  question: "To record this app you'll need to meet its access requirements first. Here's the process."
+  header: "App Access Setup"
   options:
-    - label: "Finish setup"
-    - label: "Cancel"
+    - label: "I've already done this — wallet is ready and app is unlocked"
+    - label: "Walk me through it"
   preview: |
-    Chrome CDP: [CDP_OK ? "✅ Running" : "⚠️ Not detected — start Chrome before recording"]
-    Tailscale:  [TUNNEL_OK ? "✅ Active" : "⚠️ Not active — run forward command before recording"]
+    This app requires locking tokens to access all features.
+    You need to do this once, from inside the DappSnap Chrome profile.
 
-    WHAT SETUP WILL DO
-    - Create a shortcut (alias) on your machine to launch dappsnap
-    - Save your Chrome connection settings
+    GENERAL PROCESS:
+    1. Get the required tokens into your recording wallet
+       (You'll need to buy or transfer them — check the app's requirements)
 
-    You can run recordings even if Chrome isn't running right now —
-    just make sure to start it before you use /dappsnap:record or /dappsnap:design.
+    2. Get a small amount of ETH in the same wallet for gas fees
+       (Usually $5-10 worth is enough for a few transactions)
+
+    3. Open the app in the DappSnap Chrome window
+       Navigate to the locking/staking section
+
+    4. Connect your recording MetaMask wallet
+       Click "Connect Wallet" → choose MetaMask → approve the connection
+
+    5. Lock or stake the required amount
+       Approve the transaction in MetaMask when prompted
+
+    6. Once done, the app should show you the full experience
+       This unlocked state will persist in the DappSnap profile
+
+    FOR OCTANT v2 SPECIFICALLY:
+    - You need 100 GLM locked to unlock all pages
+    - Get GLM on a DEX (Uniswap, etc.) and send to your recording wallet
+    - Go to glm.octant.app → Lock GLM → approve in MetaMask
+    - After locking, all pages (Projects, Metrics, Leaderboard) become accessible
 ```
 
-If "Cancel" → stop, no changes.
+If "Walk me through it": ask which app, then provide specific step-by-step for that app.
+
+After confirming access is set up, tell the user:
+
+```
+Your recording wallet and app access are ready.
+From now on, every time you record this app, just:
+1. Open Chrome with the DappSnap profile (same command as before)
+2. The wallet and access state will be there — nothing to redo
+```
 
 ---
 
-## Step 6: Alias Name
+## Step 7: Confirm Readiness
 
 ```
 AskUserQuestion:
-  question: "Choose a name for your shortcut. You'll type this in your terminal to launch dappsnap."
+  question: "Everything looks good. Ready to finish setup?"
+  header: "Ready Check"
+  options:
+    - label: "Yes — finish setup"
+    - label: "I need to finish the Chrome / wallet steps first"
+  preview: |
+    Chrome (recording profile): [CDP_OK ? "✅ Running" : "⚠️ Not detected — start before recording"]
+    Wallet needed: [$NEEDS_WALLET ? "Yes" : "No"]
+    [if NEEDS_WALLET]: MetaMask: [confirmed installed ? "✅ Ready" : "⚠️ Needs setup"]
+    [if ACCESS_REQUIREMENTS]: App access: [confirmed ? "✅ Unlocked" : "⚠️ Complete token locking first"]
+
+    You can finish setup now and complete any remaining steps later.
+    Just make sure Chrome is running before you start a recording.
+```
+
+---
+
+## Step 8: Alias + .env
+
+Ask for alias name:
+```
+AskUserQuestion:
+  question: "Choose a shortcut name. You'll type this to launch dappsnap."
   header: "Shortcut Name"
   options:
     - label: "dappsnap (recommended)"
     - label: "snap"
     - label: "recorder"
-    - label: "Custom name"
+    - label: "Custom"
 ```
 
-Store as `$ALIAS_NAME`. Check it's not already taken:
+Detect shell, resolve config file (zsh→`~/.zshrc`, bash→`~/.bashrc`, fish→`~/.config/fish/config.fish`).
 
+Check alias isn't taken:
 ```bash
 command -v $ALIAS_NAME 2>/dev/null; echo "exit:$?"
 ```
 
-If taken, inform user and ask for a different name.
-
----
-
-## Step 7: Write Alias
-
-Detect shell, resolve config file:
-- zsh → `~/.zshrc`
-- bash → `~/.bashrc` (or `~/.bash_profile` on macOS)
-- fish → `~/.config/fish/config.fish`
-
-Remove any existing dappsnap lines, append:
-
+Write alias:
 ```bash
 grep -v '# dappsnap-plugin' "$SHELL_CONFIG" > "$SHELL_CONFIG.tmp" && mv "$SHELL_CONFIG.tmp" "$SHELL_CONFIG"
 echo "" >> "$SHELL_CONFIG"
 echo "alias $ALIAS_NAME='claude --plugin-dir $PLUGIN_DIR'  # dappsnap-plugin" >> "$SHELL_CONFIG"
 ```
 
----
-
-## Step 8: Write .env
-
-If `.env` doesn't exist or is missing `CDP_HOST`:
-
+Write .env (localhost defaults — same machine setup):
 ```bash
-cat >> "$PLUGIN_DIR/.env" << EOF
-CDP_HOST=100.68.19.10
+if [ ! -f "$PLUGIN_DIR/.env" ] || ! grep -q "CDP_HOST" "$PLUGIN_DIR/.env"; then
+  cat >> "$PLUGIN_DIR/.env" << EOF
+CDP_HOST=localhost
 CDP_PORT=9222
-DAPPSNAP_URL=https://glm.octant.app/
+DAPPSNAP_URL=$TARGET_URL
 EOF
+fi
 ```
 
 ---
@@ -291,28 +362,25 @@ EOF
 ```
 ✅ Setup complete.
 
-YOUR SHORTCUT
-  alias $ALIAS_NAME='claude --plugin-dir $PLUGIN_DIR'
+TO RECORD (every time):
 
-TO START NOW — run this in your terminal:
-  source $SHELL_CONFIG && cd $PLUGIN_DIR && $ALIAS_NAME
-
-EVERY TIME YOU WANT TO RECORD
-1. Start Chrome with the DappSnap profile (keep that terminal open):
+1. Open a terminal and start Chrome:
    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
      --remote-debugging-port=9222 \
      --user-data-dir="$HOME/Library/Application Support/DappSnap-Profile"
+   → Leave this terminal open while recording
 
-2. Start the Tailscale tunnel (run once per session):
-   /Applications/Tailscale.app/Contents/MacOS/Tailscale serve --bg --tcp 9222 tcp://localhost:9222
+2. Open another terminal and launch dappsnap:
+   source $SHELL_CONFIG && $ALIAS_NAME
 
-3. Launch dappsnap:
-   $ALIAS_NAME
+3. Choose your recording mode:
+   /dappsnap:design    ← guided: choose pages, actions, duration
+   /dappsnap:record    ← fast: records immediately with saved defaults
+   /dappsnap:status    ← check Chrome is reachable
 
-4. Run a recording:
-   /dappsnap:design     ← guided: choose URL, pages, actions, duration
-   /dappsnap:record     ← fast: records immediately with saved defaults
-   /dappsnap:status     ← check if Chrome and Tailscale are active
+4. When recording is done, close the Chrome terminal.
 
-5. When done recording, you can close the Chrome terminal.
+Your recording profile and wallet state are saved in:
+  ~/Library/Application Support/DappSnap-Profile
+Everything will be there next time — no need to reconnect or lock tokens again.
 ```
