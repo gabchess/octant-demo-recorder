@@ -1,6 +1,14 @@
 ---
-description: Record a video demo of any web page or dApp. Runs a 3-question guided flow to determine the right recording path (Web2, wallet-only, or token-lock), then executes the recording.
-argument-hint: <url> [--steps "step1, step2"] [--duration N]
+name: record
+description: >
+  This skill should be used when the user wants to "record a demo",
+  "record a video", "capture a screencast", or "record a dApp".
+  Runs a 3-question guided flow to determine the right recording path
+  (Web2, wallet-only, or token-lock), then executes the recording.
+metadata:
+  author: Gabriel Abreu
+  version: '3.0.0'
+  argument-hint: <url> [--steps "step1, step2"] [--duration N]
 allowed-tools:
   - Bash
   - Read

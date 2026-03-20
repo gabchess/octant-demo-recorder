@@ -1,28 +1,68 @@
-# DappSnap
+# Aria Plugin
 
-Record video walkthroughs of any web3 app — navigating pages, scrolling, interacting — and save as MP4. No screen recorder needed.
+**ARIA** -- Record video demos of any web page or dApp. Wallet-free pages use local headless Playwright. Wallet-required dApps connect to Chrome via CDP.
+
+## Components
+
+### Agents
+
+| Agent | Model | Description |
+|-------|-------|-------------|
+| `aria-navigator` | sonnet | Previews a URL, reports page structure and wallet requirements before recording starts |
+
+### Skills
+
+| Skill | Description |
+|-------|-------------|
+| `/aria:record` | Guided demo recording -- asks 3 questions (Web2/Web3, wallet, token lock), then records |
+| `/aria:design` | Design a recording session interactively |
+| `/aria:setup` | First-time setup -- Chrome, MetaMask, wallet requirements |
+| `/aria:status` | Health check -- Chrome reachable, build current, last recording |
+
+## Usage
+
+```bash
+# Launch Claude Code with the aria plugin
+alias aria='claude --plugin-dir ~/projects/octant-demo-recorder'
+aria
+
+# Inside a session:
+/aria:record https://glm.octant.app/projects
+/aria:record https://example.com --steps "scroll down 500px, wait 3 seconds"
+/aria:status
+```
 
 ## Install
 
-Paste this into any Claude Code session:
+1. Clone and build:
+   ```bash
+   git clone https://github.com/gabchess/octant-demo-recorder.git ~/projects/octant-demo-recorder
+   cd ~/projects/octant-demo-recorder
+   npm install && npm run build
+   npx playwright install chromium
+   ```
 
-```
-fetch https://raw.githubusercontent.com/gabchess/octant-demo-recorder/main/SKILL.md and follow the instructions
-```
+2. Add shell alias:
+   ```bash
+   echo 'alias aria="claude --plugin-dir ~/projects/octant-demo-recorder"' >> ~/.zshrc
+   source ~/.zshrc
+   ```
 
-That's it. The setup skill walks you through everything.
-
-## Commands
-
-| Command | What it does |
-|---|---|
-| `/dappsnap:setup` | First-time setup. Walks you through Chrome, MetaMask, and wallet requirements |
-| `/dappsnap:design` | Design a recording — choose URL, pages, actions, duration |
-| `/dappsnap:record` | Fast path — record immediately with saved defaults |
-| `/dappsnap:status` | Check Chrome is reachable and ready |
+3. Start a session:
+   ```bash
+   aria
+   ```
 
 ## Requirements
 
-- Claude Code
-- Google Chrome (macOS)
+- Claude Code CLI
 - Node.js 18+
+- Google Chrome (for wallet-required dApps only)
+
+## Author
+
+Gabriel Abreu (gabe@octantlabs.io)
+
+## Version
+
+3.0.0

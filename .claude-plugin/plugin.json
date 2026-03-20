@@ -1,5 +1,9 @@
 {
   "name": "aria",
   "description": "Record video demos of any web page or dApp. Wallet-free pages use local headless Playwright. Wallet-required dApps connect to Chrome via CDP.",
-  "version": "3.0.0"
+  "version": "3.0.0",
+  "author": {
+    "name": "Gabriel Abreu",
+    "email": "gabe@octantlabs.io"
+  }
 }
