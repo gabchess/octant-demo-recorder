@@ -210,7 +210,13 @@ node dist/src/index.js --url "$FLOW_URL" --duration $DURATION_SECONDS
 
 ## After All Flows
 
-If `$OUTPUT_FORMAT` includes MP4: convert each WebM:
+If `$OUTPUT_FORMAT` includes MP4, check for ffmpeg first:
+
+```bash
+which ffmpeg > /dev/null 2>&1 && echo "FFMPEG_OK" || echo "FFMPEG_MISSING"
+```
+
+If `FFMPEG_OK`: convert each WebM:
 
 ```bash
 ffmpeg -y -i "$WEBM_PATH" \
@@ -218,6 +224,16 @@ ffmpeg -y -i "$WEBM_PATH" \
   -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart \
   "$MP4_PATH"
 ```
+
+If `FFMPEG_MISSING`: do NOT fail. Tell the user:
+
+```
+Recording saved: [path] (WebM format)
+ffmpeg is not installed -- to convert to MP4, run: brew install ffmpeg
+WebM plays in Chrome, VLC, or QuickTime. No conversion needed to share or upload.
+```
+
+Then continue to the final report. The WebM is always the primary output.
 
 Final report:
 
