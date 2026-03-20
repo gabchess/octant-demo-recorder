@@ -16,7 +16,6 @@
 |-------|-------------|
 | `/aria:record` | Guided demo recording -- asks 3 questions (Web2/Web3, wallet, token lock), then records |
 | `/aria:design` | Design a recording session interactively |
-| `/aria:setup` | First-time setup -- Chrome, MetaMask, wallet requirements |
 | `/aria:status` | Health check -- Chrome reachable, build current, last recording |
 
 ## Usage
