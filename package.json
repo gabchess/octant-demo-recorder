@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "Headless MetaMask automation + video recording pipeline for Web3 dapps",
   "type": "module",
-  "main": "dist/record.js",
+  "main": "dist/src/index.js",
   "bin": {
-    "dappsnap": "dist/record.js"
+    "dappsnap": "dist/src/index.js"
   },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "test": "playwright test test/basic.test.ts",
+    "test": "playwright test",
     "synpress:setup": "synpress",
     "lint": "tsc --noEmit"
   },
