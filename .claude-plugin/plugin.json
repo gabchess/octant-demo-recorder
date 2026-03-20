@@ -1,5 +1,5 @@
 {
-  "name": "dappsnap",
-  "description": "Record screencasts of any web3 dApp via remote Chrome CDP. Config-driven, wallet-aware, zero-display.",
-  "version": "1.0.0"
+  "name": "aria",
+  "description": "Record video demos of any web page or dApp. Wallet-free pages use local headless Playwright. Wallet-required dApps connect to Chrome via CDP.",
+  "version": "3.0.0"
 }
