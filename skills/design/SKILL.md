@@ -11,7 +11,7 @@ context: inherit
 user-invocable: true
 ---
 
-# DappSnap Design
+# Aria Design
 
 Conversational recording planner. Interviews the user, builds a recording plan, executes on confirmation. Always ask all questions before recording anything.
 
@@ -163,7 +163,7 @@ AskUserQuestion:
     - label: "Change something"
       description: "Go back and edit a specific step"
     - label: "Save plan only"
-      description: "Write plan to disk, run later with /dappsnap:record"
+      description: "Write plan to disk, run later with /aria:record"
 ```
 
 If "Change something" → ask which step to change, loop back.
@@ -173,7 +173,7 @@ If "Record now" → proceed.
 Write plan to `.arcana/artifacts/RECORDING-PLAN.md`:
 
 ```markdown
-# DappSnap Recording Plan
+# Aria Recording Plan
 
 URL: $TARGET_URL
 Pages: $PAGES
@@ -197,7 +197,7 @@ For each page in `$PAGES`:
 2. Run the recording:
 ```bash
 cd "$PLUGIN_DIR"
-node dist/src/screencast.js --url "$FLOW_URL" --duration $DURATION_SECONDS
+node dist/src/index.js --url "$FLOW_URL" --duration $DURATION_SECONDS
 ```
 
 3. If `$ACTIONS` includes "Hover over key elements": after page load, move mouse slowly across the viewport in a natural path (top section, middle, charts or cards area).
@@ -228,14 +228,14 @@ Files:
   [list each output file with size]
 
 Plan saved: .arcana/artifacts/RECORDING-PLAN.md
-To re-run: /dappsnap:record
+To re-run: /aria:record
 ```
 
 ## Anti-Patterns
 
-- **Never record without confirming the plan** — always present the full plan summary in a preview block and wait for explicit approval before starting any recording
-- **Never skip the interview** — even if the user provides a URL as an argument, still ask about pages, actions, and duration; the URL only skips Step 1
-- **Never batch questions** — ask one question at a time; each step gets its own AskUserQuestion call
-- **Never assume the user knows what CDP or WebM means** — use plain language; say "Chrome recording connection" not "CDP", say "video file" not "WebM" unless the user is technical
-- **Never start recording without verifying Chrome is reachable** — run the CDP health check before attempting to record; if Chrome is not running, tell the user how to start it
-- **Never overwrite an existing recording plan without asking** — if `.arcana/artifacts/RECORDING-PLAN.md` already exists, ask whether to replace or create a new one
+- **Never record without confirming the plan**  -- always present the full plan summary in a preview block and wait for explicit approval before starting any recording
+- **Never skip the interview**  -- even if the user provides a URL as an argument, still ask about pages, actions, and duration; the URL only skips Step 1
+- **Never batch questions**  -- ask one question at a time; each step gets its own AskUserQuestion call
+- **Never assume the user knows technical terms** -- use plain language; say "video file" not "WebM" unless the user is technical
+- **Never start recording without verifying the build exists**  -- check that dist/src/index.js is present before attempting to record
+- **Never overwrite an existing recording plan without asking**  -- if `.arcana/artifacts/RECORDING-PLAN.md` already exists, ask whether to replace or create a new one
