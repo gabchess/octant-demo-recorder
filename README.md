@@ -1,3 +1,9 @@
+## UPDATE
+
+This plugin is sunset/outdated, and the PRO version that one-shots any website app videos and demos in less than 5 mins is currently private for Octant internal use only. 
+
+Sorry guys. 
+
 # Aria Plugin
 
 **ARIA** -- Record video demos of any web page with guided prompts and headless Playwright. Design a session, hit record, get a video.
@@ -36,11 +42,3 @@ fetch https://raw.githubusercontent.com/gabchess/octant-demo-recorder/main/SKILL
 ```
 
 Then follow the instructions in the SKILL.md.
-
-## Author
-
-Gabriel Abreu (gabe@octantlabs.io)
-
-## Version
-
-3.0.0
